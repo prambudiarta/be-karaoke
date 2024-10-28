@@ -16,3 +16,5 @@ logs/
 
 # TypeScript cache
 *.tsbuildinfo
+*.sqlite3
+uploads/

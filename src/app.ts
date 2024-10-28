@@ -2,6 +2,9 @@ import express from 'express';
 import path from 'path';
 import itemRoutes from './routes/item.routes';
 import categoryRoutes from './routes/category.routes';
+import roomRoutes from './routes/room.routes';
+import printerRoutes from './routes/printer.routes';
+import orderRoutes from './routes/order.routes';
 
 const app = express();
 
@@ -19,5 +22,14 @@ app.use('/api', itemRoutes);
 
 // Use category routes
 app.use('/api', categoryRoutes);
+
+// Use room routes
+app.use('/api', roomRoutes);
+
+// Use printer routes
+app.use('/api', printerRoutes);
+
+// Use order routes
+app.use('/api', orderRoutes);
 
 export default app;
