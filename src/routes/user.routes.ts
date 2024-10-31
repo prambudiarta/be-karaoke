@@ -1,6 +1,6 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { User } from '../interfaces/basic';
-import { UserModel } from '@/model/user.model';
+import { UserModel } from "../model/user.model";
 import bcrypt from 'bcrypt';
 
 const router = Router();
@@ -17,10 +17,11 @@ router.get('/users', async (req, res) => {
 });
 
 // Login
-router.post('/users/login', async (req, res) => {
+router.post('/users/login', async (req: Request, res: Response) => {
     try {
         const { username, password } = req.body;
         const user: User = await userModel.getByUsername(username);
+        
         
         if (user && await bcrypt.compare(password, user.password)) {
             res.json(user);
@@ -28,6 +29,7 @@ router.post('/users/login', async (req, res) => {
             res.status(401).json({ error: 'Invalid username or password' });
         }
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error: 'Failed to login' });
     }
 });
