@@ -5,6 +5,7 @@ import categoryRoutes from './routes/category.routes';
 import roomRoutes from './routes/room.routes';
 import printerRoutes from './routes/printer.routes';
 import orderRoutes from './routes/order.routes';
+import userRoutes from './routes/user.routes';
 
 const app = express();
 
@@ -31,5 +32,8 @@ app.use('/api', printerRoutes);
 
 // Use order routes
 app.use('/api', orderRoutes);
+
+// Use user routes
+app.use('/api', userRoutes);
 
 export default app;

@@ -45,3 +45,10 @@ export interface OrderItem {
   price: number;
   total_price: number;
 }
+
+export interface User {
+  id?: number;
+  username: string;
+  password: string;
+  role: "admin" | "user" | "staff";
+}
