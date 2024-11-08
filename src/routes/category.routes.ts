@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { CategoryModel } from '../model/category.model';
 import { Category } from '../interfaces/basic';
 import upload from '../config/multer';
+import fs from 'fs';
+import path from 'path';
 
 const router = Router();
 const categoryModel = new CategoryModel();
@@ -35,25 +37,60 @@ router.get('/categories/:id', async (req, res) => {
 router.post('/categories', upload.single('image'), async (req, res) => {
   try {
     const newCategory: Category = req.body;
-    if (req.file) {
+    const file: Express.Multer.File = req.file;
+
+    const uploadsDir = path.join(__dirname, '../../uploads/categories');
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+    if (file) {
       newCategory.imageUrl = `/uploads/categories/${req.file.filename}`;
     }
     const ids = await categoryModel.create(newCategory);
     res.status(201).json({ id: ids[0] });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: 'Failed to create category' });
   }
 });
 
 // Update a category
-router.put('/categories/:id', upload.single('image'), async (req, res) => {
+// Update a category
+router.put('/categories/:id', upload.single('image'), async (req, res): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
     const updatedCategory: Category = req.body;
-    if (req.file) {
-      updatedCategory.imageUrl = `/uploads/categories/${req.file.filename}`;
+    const file: Express.Multer.File = req.file;
+
+    const uploadsDir = path.join(__dirname, '../../uploads/categories');
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
     }
+
+    // Fetch existing category to get current imageUrl
+    const existingCategory = await categoryModel.getById(id);
+    if (!existingCategory) {
+      res.status(404).json({ error: 'Category not found' });
+      return;
+    }
+
+    // If there's a new file, update imageUrl, and delete the old image if it exists
+    if (file) {
+      // Set new imageUrl
+      updatedCategory.imageUrl = `/uploads/categories/${file.filename}`;
+
+      // Delete the old image if it exists
+      if (existingCategory.imageUrl) {
+        const oldImagePath = path.join(__dirname, '../../', existingCategory.imageUrl);
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);  // Delete old image
+        }
+      }
+    } else {
+      // Retain the existing image URL if no new file is uploaded
+      updatedCategory.imageUrl = existingCategory.imageUrl;
+    }
+
+    // Update the category in the database
     const count = await categoryModel.update(id, updatedCategory);
     if (count) {
       res.status(204).send();
@@ -61,9 +98,11 @@ router.put('/categories/:id', upload.single('image'), async (req, res) => {
       res.status(404).json({ error: 'Category not found' });
     }
   } catch (error) {
+    console.error('Error updating category:', error);
     res.status(500).json({ error: 'Failed to update category' });
   }
 });
+
 
 // Delete a category
 router.delete('/categories/:id', async (req, res) => {

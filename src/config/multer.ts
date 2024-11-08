@@ -1,10 +1,17 @@
-import multer from 'multer';
-import path from 'path';
+import multer from "multer";
+import path from "path";
 
 // Set storage engine
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../../uploads'));
+    console.log(req.url);
+    if (req.url === "/categories") {
+      cb(null, path.join(__dirname, "../../uploads/categories"));
+    } else if (req.url === "/items") {
+      cb(null, path.join(__dirname, "../../uploads/items"));
+    } else {
+      cb(null, path.join(__dirname, "../../uploads"));
+    }
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
@@ -21,7 +28,10 @@ const upload = multer({
 });
 
 // Check file type
-function checkFileType(file: Express.Multer.File, cb: multer.FileFilterCallback) {
+function checkFileType(
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+) {
   // Allowed ext
   const filetypes = /jpeg|jpg|png|gif/;
   // Check ext
@@ -32,7 +42,7 @@ function checkFileType(file: Express.Multer.File, cb: multer.FileFilterCallback)
   if (mimetype && extname) {
     return cb(null, true);
   } else {
-    cb(new Error('Error: Images Only!'));
+    cb(new Error("Error: Images Only!"));
   }
 }
 

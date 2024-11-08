@@ -25,6 +25,8 @@ app.use(
   })
 );
 
+app.use("uploads", express.static(path.join(__dirname, "../uploads")));
+
 // Middleware to parse JSON bodies
 app.use(express.json());
 

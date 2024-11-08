@@ -37,6 +37,7 @@ router.post('/printers', async (req, res) => {
     const ids = await printerModel.create(newPrinter);
     res.status(201).json({ id: ids[0] });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: 'Failed to create printer' });
   }
 });

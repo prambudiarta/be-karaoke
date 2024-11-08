@@ -13,7 +13,7 @@ export class PrinterModel {
   }
 
   public async create(printer: Printer): Promise<number[]> {
-    return db(this.tableName).insert(printer);
+    return db(this.tableName).insert({ 'description': printer.description, 'ip': printer.ip });
   }
 
   public async update(id: number, printer: Printer): Promise<number> {
