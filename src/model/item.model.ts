@@ -8,7 +8,9 @@ export class ItemModel {
   private tableName = 'items';
 
   public async getAll(): Promise<Item[]> {
-    return db(this.tableName).select('*');
+    return db(this.tableName)
+      .join('categories', 'items.category_id', 'categories.id')
+      .select('items.*', 'categories.category as category');
   }
 
   public async getById(id: number): Promise<Item> {
@@ -16,6 +18,7 @@ export class ItemModel {
   }
 
   public async create(item: Item): Promise<number[]> {
+    console.log(`Inserting item into ${this.tableName}:`, item);
     return db(this.tableName).insert(item);
   }
 

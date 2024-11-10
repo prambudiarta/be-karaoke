@@ -28,6 +28,15 @@ export class OrderModel {
     });
   }
 
+  public async getByRoomAndStatusNotCompleted(
+    roomId: number
+  ): Promise<Order | undefined> {
+    return db(this.orderTable)
+      .where({ room_id: roomId })
+      .whereNot({ status: "completed" })
+      .first();
+  }
+
   public async update(
     id: number,
     order: Order,
@@ -47,6 +56,10 @@ export class OrderModel {
 
       return 1;
     });
+  }
+
+  public async getItemsByOrderId(orderId: number): Promise<OrderItem[]> {
+    return db(this.orderItemTable).where({ order_id: orderId });
   }
 
   public async delete(id: number): Promise<number> {

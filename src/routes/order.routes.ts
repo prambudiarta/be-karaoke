@@ -74,4 +74,26 @@ router.delete("/orders/:id", async (req, res) => {
   }
 });
 
+// Get orders by room and status not completed
+router.get("/orders/room/:room", async (req, res) => {
+  try {
+    const room = parseInt(req.params.room, 10);
+    const order: Order = await orderModel.getByRoomAndStatusNotCompleted(room);
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch orders" });
+  }
+});
+
+// Get current order items by order ID
+router.get("/orders/:id/items", async (req, res) => {
+  try {
+    const orderId = parseInt(req.params.id, 10);
+    const items: OrderItem[] = await orderModel.getItemsByOrderId(orderId);
+    res.json(items);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch order items" });
+  }
+});
+
 export default router;

@@ -4,10 +4,9 @@ import path from "path";
 // Set storage engine
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    console.log(req.url);
-    if (req.url === "/categories") {
+    if (req.url.includes("/categories")) {
       cb(null, path.join(__dirname, "../../uploads/categories"));
-    } else if (req.url === "/items") {
+    } else if (req.url.includes("/items")) {
       cb(null, path.join(__dirname, "../../uploads/items"));
     } else {
       cb(null, path.join(__dirname, "../../uploads"));
